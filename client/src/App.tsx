@@ -4,6 +4,7 @@ import { useState } from "react";
 import { trpc } from "./utils/trpc";
 
 import Form from "./components/form";
+
 export default function App() {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
@@ -11,8 +12,6 @@ export default function App() {
       links: [
         httpBatchLink({
           url: "http://localhost:3000/",
-
-          // You can pass any HTTP headers you wish here
         }),
       ],
     })
@@ -21,6 +20,7 @@ export default function App() {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <Form />
+ 
       </QueryClientProvider>
     </trpc.Provider>
   );
