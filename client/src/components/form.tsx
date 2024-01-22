@@ -11,7 +11,7 @@ const Form: FunctionComponent<FormProps> = () => {
   const x = trpc.userCreate.useMutation();
 
   const [Users, setUsers] = useState<RouterOutput["getUsers"]>([]);
-  //   const users = trpc.greeting.useQuery();
+  const users = trpc.greeting.useQuery();
 
   const [Data, setData] = useState<RouterInput["userCreate"]>({
     email: "",
