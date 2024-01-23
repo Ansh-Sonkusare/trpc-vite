@@ -1,38 +1,39 @@
-import { publicProcedure, router } from "./trpc";
-import { PrismaClient } from "@prisma/client";
+import { createContext, createTRPCRouter, publicProcedure } from "./trpc";
 
 import { createHTTPServer } from "@trpc/server/adapters/standalone";
 import { z } from "zod";
 import cors from "cors";
 
-const prisma = new PrismaClient();
 const User = z.object({
   name: z.string(),
   email: z.string(),
 });
-const appRouter = router({
+
+export const appRouter = createTRPCRouter({
   greeting: publicProcedure.query(async () => {
+    console.log("Hello");
     return "hello tRPC !";
   }),
-  userCreate: publicProcedure.input(User).mutation(async ({ input }) => {
-    console.log(input);
 
-    const user = await prisma.user.create({ data: input });
-    console.log(user);
+  userCreate: publicProcedure.input(User).mutation(async ({ ctx, input }) => {
+    const d = await ctx.db.user.create({
+      data: input,
+    });
+    console.log(d);
 
-    return "Success";
+    return input;
   }),
-  getUsers: publicProcedure.query(async () => {
-    const users = await prisma.user.findMany();
-
-    return users;
+  getUsers: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.user.findMany();
   }),
 });
 
 const server = createHTTPServer({
-  middleware: cors(),
   router: appRouter,
+  createContext: () => createContext(),
+  middleware: cors(),
 });
+
 server.listen(3000);
 
 export type AppRouter = typeof appRouter;

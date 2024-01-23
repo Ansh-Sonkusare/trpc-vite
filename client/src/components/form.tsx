@@ -12,14 +12,16 @@ const Form: FunctionComponent<FormProps> = () => {
     name: "",
   });
 
-  const createUser = trpc.userCreate.useMutation();
-  const Users = trpc.getUsers.useQuery();
+  const createUser = trpc.userCreate.useMutation({
+    onSuccess: () => {
+      refetch();
+    },
+  });
+  const { data, refetch } = trpc.getUsers.useQuery();
 
   const inp = useRef<HTMLButtonElement>(null);
-  const handleClick = async () => {
-    await createUser.mutate(Data);
-    await Users.refetch();
-    // Working on refetching logic
+  const handleClick = () => {
+    createUser.mutate(Data);
     setData({
       name: "",
       email: "",
@@ -52,7 +54,7 @@ const Form: FunctionComponent<FormProps> = () => {
         </button>
       </div>
       <div>
-        {Users.data?.map((user) => {
+        {data?.map((user) => {
           return <div key={user.id}>Name: {user.name} </div>;
         })}
       </div>
