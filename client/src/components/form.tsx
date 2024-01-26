@@ -2,6 +2,8 @@ import { FunctionComponent, useRef, useState } from "react";
 import { trpc } from "../utils/trpc";
 import { inferRouterInputs } from "@trpc/server";
 import { AppRouter } from "../../../server";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 type RouterInput = inferRouterInputs<AppRouter>;
 
 interface FormProps {}
@@ -11,13 +13,13 @@ const Form: FunctionComponent<FormProps> = () => {
     email: "",
     name: "",
   });
+  const { data, refetch } = trpc.getUsers.useQuery();
 
   const createUser = trpc.userCreate.useMutation({
     onSuccess: () => {
       refetch();
     },
   });
-  const { data, refetch } = trpc.getUsers.useQuery();
 
   const inp = useRef<HTMLButtonElement>(null);
   const handleClick = () => {
@@ -31,32 +33,39 @@ const Form: FunctionComponent<FormProps> = () => {
   return (
     <>
       <div className="m-12 flex flex-col ">
-        <input
-          className="border-[1px] rounded-md py-1 px-4  border-slate-800 m-4 w-96 "
+        <Input
+          className="w-96 my-4  text-white"
           type="text"
           placeholder="Username"
           value={Data.name}
           onChange={(e) => setData({ ...Data, name: e.target.value })}
         />
-        <input
-          className="border-[1px] rounded-md py-1 px-4  border-slate-800 m-4 w-96 "
+        <Input
+          className="w-96 my-4 text-white"
           type="text"
           placeholder="Email"
           value={Data.email}
           onChange={(e) => setData({ ...Data, email: e.target.value })}
         />
-        <button
-          className="border-2 h-14 w-32 rounded-lg  border-slate-800 m-4"
+
+        <Button
           ref={inp}
+          variant={"secondary"}
           onClick={handleClick}
+          className="h-14 w-32 "
         >
-          Submit
-        </button>
-      </div>
-      <div>
-        {data?.map((user) => {
-          return <div key={user.id}>Name: {user.name} </div>;
-        })}
+          CLICK ME
+        </Button>
+
+        <div>
+          {data?.map((user) => {
+            return (
+              <div className="text-white" key={user.id}>
+                Name: {user.name}{" "}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </>
   );

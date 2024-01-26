@@ -20,7 +20,6 @@ export default function App() {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <Form />
- 
       </QueryClientProvider>
     </trpc.Provider>
   );
